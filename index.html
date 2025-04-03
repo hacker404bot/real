@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to Braille Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Audio to Braille Converter</h1>
+        <button id="start-btn">🎤 Speak</button>
+        <p id="text-output">Recognized Text: <span></span></p>
+        <p id="braille-output">Braille Output: <span></span></p>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+    
+    <script>
+        const brailleDict = {
+            "a": "⠁", "b": "⠃", "c": "⠉", "d": "⠙", "e": "⠑", "f": "⠋", "g": "⠛", "h": "⠓", "i": "⠊", "j": "⠚",
+            "k": "⠅", "l": "⠇", "m": "⠍", "n": "⠝", "o": "⠕", "p": "⠏", "q": "⠟", "r": "⠗", "s": "⠎", "t": "⠞",
+            "u": "⠥", "v": "⠧", "w": "⠺", "x": "⠭", "y": "⠽", "z": "⠵", " ": " ", ".": "⠲", ",": "⠂", "?": "⠦"
+        };
+
+        function textToBraille(text) {
+            return text.toLowerCase().split('').map(char => brailleDict[char] || char).join('');
+        }
+
+        document.getElementById("start-btn").addEventListener("click", () => {
+            if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+                document.getElementById("error-message").textContent = "Speech recognition is not supported in this browser.";
+                return;
+            }
+            
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                document.querySelector("#text-output span").textContent = text;
+                document.querySelector("#braille-output span").textContent = textToBraille(text);
+            };
+
+            recognition.onerror = (event) => {
+                document.getElementById("error-message").textContent = "Speech recognition error: " + event.error;
+            };
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        p {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        span {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-top: 10px;
+            font-size: 24px;
+        }
+    </style>
+</body>
+</html>
