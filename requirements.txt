@@ -5,3 +5,6 @@ scikit-learn
 gunicorn
 gTTS
 numpy
+Pillow
+speechrecognition
+pyttsx3
