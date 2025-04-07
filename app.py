@@ -3,6 +3,11 @@ from flask import Flask
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return "Hello from Flask!"
+
+
 
 # Braille dictionary mapping text to Unicode Braille patterns
 braille_dict = {
